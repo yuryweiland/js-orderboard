@@ -1,0 +1,39 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial';
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.status-container {
+    flex: 1;
+}
+
+.status-container h2 {
+    display: block;
+    width: 100%;
+    padding: 20px;
+    margin: 0;
+    font-size: 28px;
+    color: #fff;
+}
+
+.processing-orders h2 {
+    background: orange;
+}
+
+.ready-orders h2 {
+    background: green;
+}
+
+.orders-container {
+    padding: 0 20px;
+}
+
+.orders-container .order p {
+    font-size: 22px;
+}
