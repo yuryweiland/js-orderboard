@@ -16,7 +16,7 @@ todayDate.setMilliseconds(0);
 
 var todayISODate = todayDate.toISOString();
 
-function setOrders() {
+function setOrdersToLocalStorage() {
     localStorage.setItem('orders', JSON.stringify(orders));
 }
 
@@ -81,7 +81,7 @@ function editOrder(order, newOrderNumber, newStatus) {
         order.status = newStatus;
     }
 
-    setOrders();
+    setOrdersToLocalStorage();
 
 }
 
@@ -92,7 +92,7 @@ function editOrder(order, newOrderNumber, newStatus) {
 function deleteOrder(currentOrder) {
     orders.filter((order) => order.id !== currentOrder.id);
 
-    setOrders();
+    setOrdersToLocalStorage();
 }
 
 /**
@@ -162,5 +162,5 @@ orders = [
     },
 ];
 
-setOrders();
+setOrdersToLocalStorage();
 generateOrderLists();

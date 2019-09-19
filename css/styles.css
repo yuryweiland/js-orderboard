@@ -4,6 +4,18 @@ body, html {
     font-family: 'Arial';
 }
 
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.clear-both {
+    clear: both;
+}
+
 .main-container {
     display: flex;
     flex-direction: row;
@@ -36,4 +48,33 @@ body, html {
 
 .orders-container .order p {
     font-size: 80px;
+}
+
+.panel-container {
+    margin: 20px auto;
+    width: 980px;
+}
+
+.panel-container h2 {
+    margin: 0;
+}
+
+.panel-table {
+    border: 1px #ccc solid;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.panel-table td, th {
+    border-collapse: collapse;
+    border: 1px #ccc solid;
+    padding: 8px;
+}
+
+.panel-table td.center {
+    text-align: center;
+}
+
+.panel-table .order-number input {
+    width: calc(100% - 87px);
 }
