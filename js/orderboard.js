@@ -10,15 +10,18 @@ todayDate.setMilliseconds(0);
 
 var todayISODate = todayDate.toISOString();
 
+function setOrders() {
+    localStorage.setItem('orders', JSON.stringify(orders));
+}
+
 /**
  * Показать все заказы за сегодня
  * @param todayISODate
  * @returns {*[]}
  */
-function showDayOrders(todayISODate) {
+function setDayOrders(todayISODate) {
     dayOrders = orders.filter((order) => order.date === todayISODate);
-
-    return dayOrders;
+    localStorage.setItem('dayOrders', JSON.stringify(dayOrders));
 }
 
 /**
@@ -26,10 +29,9 @@ function showDayOrders(todayISODate) {
  * @param todayISODate
  * @returns {*[]}
  */
-function showProcessingOrders(todayISODate) {
+function setProcessingOrders(todayISODate) {
     processingOrders = orders.filter((order) => order.date === todayISODate && order.status === 'processing');
-
-    return processingOrders;
+    localStorage.setItem('processingOrders', JSON.stringify(processingOrders));
 }
 
 /**
@@ -39,8 +41,7 @@ function showProcessingOrders(todayISODate) {
  */
 function showReadyOrders(todayISODate) {
     readyOrders = orders.filter((order) => order.date === todayISODate && order.status === 'ready');
-
-    return readyOrders;
+    localStorage.setItem('readyOrders', JSON.stringify(readyOrders));
 }
 
 /**
@@ -74,6 +75,8 @@ function editOrder(order, newOrderNumber, newStatus) {
         order.status = newStatus;
     }
 
+    setOrders();
+
 }
 
 /**
@@ -82,4 +85,25 @@ function editOrder(order, newOrderNumber, newStatus) {
  */
 function deleteOrder(currentOrder) {
     orders.filter((order) => order.id !== currentOrder.id);
+
+    setOrders();
 }
+
+function getObjectFromLocalStorage(objectName) {
+    return JSON.parse(localStorage.getItem(objectName));
+}
+
+orders = [
+    {
+        id: 1,
+        status: 'processing'
+    },
+    {
+        id: 2,
+        status: 'processing'
+    },
+];
+
+// setOrders();
+
+document.getElementById('processingOrders').innerHTML = getObjectFromLocalStorage('orders');

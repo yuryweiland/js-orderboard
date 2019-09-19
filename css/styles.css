@@ -18,7 +18,7 @@ body, html {
     width: 100%;
     padding: 20px;
     margin: 0;
-    font-size: 28px;
+    font-size: 100px;
     color: #fff;
 }
 
@@ -35,5 +35,5 @@ body, html {
 }
 
 .orders-container .order p {
-    font-size: 22px;
+    font-size: 80px;
 }
