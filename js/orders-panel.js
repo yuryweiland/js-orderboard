@@ -2,11 +2,17 @@ var orders = [];
 var dayOrders = [];
 var processingOrders = [];
 var readyOrders = [];
+
+var processingButtons = document.querySelectorAll('.processingOrder');
+var readyButtons = document.querySelectorAll('.readyOrder');
 var removeButtons = document.querySelectorAll('.removeOrder');
 
 var ordersTable = document.getElementById('ordersTable');
 var setTestOrdersButton = document.getElementById('setTestOrders');
 var ordersListFragment = document.createDocumentFragment();
+
+var addNewOrderButton = document.getElementById('addNewOrderButton');
+var newOrderNumber = document.getElementById('newOrderNumber');
 
 var todayDate = new Date();
 todayDate.setMinutes(0);
@@ -66,6 +72,8 @@ function addNewOrder(orderNumber, status) {
     };
 
     orders.push(newOrder);
+    setOrdersToLocalStorage();
+    getOrdersFromLocalStorage();
 }
 
 /**
@@ -84,7 +92,7 @@ function editOrder(order, newOrderNumber, newStatus) {
     }
 
     setOrdersToLocalStorage();
-
+    getOrdersFromLocalStorage();
 }
 
 /**
@@ -94,14 +102,8 @@ function editOrder(order, newOrderNumber, newStatus) {
 function deleteOrder(orderId) {
     const updatedOrders = orders.filter((order) => order.id !== +orderId);
 
-    console.log('удаляем заказ', orderId);
-    console.log('updatedOrders', updatedOrders);
-
     setOrdersToLocalStorage(updatedOrders);
-
     getOrdersFromLocalStorage();
-
-    console.log(localStorage);
 }
 
 /**
@@ -114,8 +116,8 @@ function renderOrder(order) {
     orderRecord.innerHTML = '<td><input value="' + order.orderNumber + '"> <button>Обновить</button></td>' +
         '<td>' + order.status + '</td>' +
         '<td>' +
-        '<button>Отправить в "Готовится"</button> ' +
-        '<button>Отправить в "Готовые"</button> ' +
+        '<button class="processingOrder" orderId="' + order.id + '">Отправить в "Готовится"</button> ' +
+        '<button class="readyOrder" orderId="' + order.id + '">Отправить в "Готовые"</button> ' +
         '<button class="removeOrder" orderId="' + order.id + '">Удалить</button>' +
         '</td>';
     return orderRecord;
@@ -142,11 +144,36 @@ function generateOrderTable() {
     removeButtons = document.querySelectorAll('.removeOrder');
 }
 
-// Загрузить тестовые данные о заказах
-// setOrdersToLocalStorage();
+/**
+ * Обработка кнопки "Отправить в Готовые" для заказов
+ */
+function calculateReadyButtonsElements() {
+    var readyButtons = document.querySelectorAll('.readyOrder');
 
-// Получаем все заказы из localStorage
-getOrdersFromLocalStorage();
+    for (var i = 0; i < readyButtons.length; i++) {
+        readyButtons[i].addEventListener('click', function() {
+            let orderId = this.getAttribute("orderId");
+
+            addNewOrder(newOrderNumber, 'processing');
+            /// deleteOrder(orderId);
+        });
+    }
+}
+
+/**
+ * Обработка кнопки "Отправить в Готовится" для заказов
+ */
+function calculateProcessingButtonsElements() {
+    var processingButtons = document.querySelectorAll('.processingOrder');
+
+    for (var i = 0; i < processingButtons.length; i++) {
+        processingButtons[i].addEventListener('click', function() {
+            let orderId = this.getAttribute("orderId");
+
+            /// deleteOrder(orderId);
+        });
+    }
+}
 
 /**
  * Обработка кнопки "Удалить" для заказов
@@ -163,8 +190,23 @@ function calculateRemoveButtonsElements() {
     }
 }
 
+/**
+ * Обработчик кнопки "Добавить тестовые заказы"
+ */
 setTestOrdersButton.addEventListener('click', function() {
     setTestOrdersToLocalStorage();
     getOrdersFromLocalStorage();
-
 });
+
+newOrderNumber.addEventListener('change', function() {
+    if (this.value) {
+        addNewOrderButton.disabled = false;
+    } else {
+        addNewOrderButton.disabled = true;
+    }
+});
+
+
+// Получаем все заказы из localStorage
+getOrdersFromLocalStorage();
+addNewOrderButton.disabled = true;
