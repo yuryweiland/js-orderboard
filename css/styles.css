@@ -78,3 +78,8 @@ body, html {
 .panel-table .order-number input {
     width: calc(100% - 87px);
 }
+
+#setTestOrders {
+    float: right;
+    margin: 20px 0;
+}
