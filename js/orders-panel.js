@@ -263,8 +263,11 @@ setTestOrdersButton.addEventListener('click', function() {
     getOrdersFromLocalStorage();
 });
 
+/**
+ * Обработчик кнопки добавления нового заказа
+ * (заказ добавляется в статус "готовится"
+ */
 addNewOrderButton.addEventListener('click', function() {
-
     addNewOrder(newOrderNumber.value, 'processing');
 });
 
