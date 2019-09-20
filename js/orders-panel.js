@@ -301,6 +301,10 @@ newOrderNumber.addEventListener('keypress', function(e) {
     }
 });
 
+
+// Устанавливаем заказы в localstorage
+setOrdersToLocalStorage(orders);
+
 // Получаем все заказы из localStorage
 getOrdersFromLocalStorage();
 addNewOrderButton.disabled = true;
