@@ -43,8 +43,15 @@ function generateOrderLists() {
 
     processingOrdersList.appendChild(processingOrdersListFragment);
     readyOrdersList.appendChild(readyOrdersListFragment);
+
+    reverseChildNodes(processingOrdersList);
+    reverseChildNodes(readyOrdersList);
+
 }
 
+/**
+ * Обновление списков заказов "готовятся" и "готовы" раз в секунду
+ */
 function refreshOrderLists() {
     window.setInterval(function() {
         processingOrdersList.innerHTML = '';
