@@ -45,4 +45,13 @@ function generateOrderLists() {
     readyOrdersList.appendChild(readyOrdersListFragment);
 }
 
+function refreshOrderLists() {
+    window.setInterval(function() {
+        processingOrdersList.innerHTML = '';
+        readyOrdersList.innerHTML = '';
+        generateOrderLists();
+    }, 1000);
+}
+
 generateOrderLists();
+refreshOrderLists();
