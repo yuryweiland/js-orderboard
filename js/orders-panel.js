@@ -133,9 +133,17 @@ function deleteOrder(orderId) {
  */
 function renderOrder(order) {
     var orderRecord = document.createElement("tr");
-    orderRecord.innerHTML = '<td><input value="' + order.orderNumber +'" orderNumber="' + order.orderNumber + '" id="orderNumberInput_'+ order.id +'"> <button class="updateOrderNumber"  orderId="' + order.id + '"  orderNumber="' + order.orderNumber + '">Обновить</button></td>' +
-        '<td>' + order.status + '</td>' +
-        '<td>' +
+    let statusMessage = '';
+
+    if (order.status === 'processing') {
+        statusMessage = 'Готовится';
+    } else if (order.status === 'ready') {
+        statusMessage = 'Готов';
+    }
+
+    orderRecord.innerHTML = '<td class="order-number"><input value="' + order.orderNumber +'" orderNumber="' + order.orderNumber + '" id="orderNumberInput_'+ order.id +'"> <button class="updateOrderNumber"  orderId="' + order.id + '"  orderNumber="' + order.orderNumber + '">Обновить</button></td>' +
+        '<td width="129">' + statusMessage + '</td>' +
+        '<td width="400">' +
         '<button class="processingOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Отправить в "Готовится"</button> ' +
         '<button class="readyOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Отправить в "Готовые"</button> ' +
         '<button class="removeOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Удалить</button>' +
@@ -257,7 +265,7 @@ setTestOrdersButton.addEventListener('click', function() {
 
 addNewOrderButton.addEventListener('click', function() {
 
-    addNewOrder(newOrderNumber.value, 'new');
+    addNewOrder(newOrderNumber.value, 'processing');
 });
 
 newOrderNumber.addEventListener('change', function() {
