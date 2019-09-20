@@ -70,8 +70,20 @@ function showReadyOrders(todayISODate) {
  * @param status
  */
 function addNewOrder(orderNumber, status) {
+    let setOrderId;
+
+    console.log('orders', orders);
+
+
+    if (typeof orders === 'undefined' || !orders.length || orders === null) {
+        setOrderId = 1;
+    } else {
+        setOrderId = orders[orders.length - 1].id + 1;
+    }
+
+
     const newOrder = {
-        id: orders[orders.length - 1].id + 1,
+        id: setOrderId,
         status: status,
         orderNumber: orderNumber.toString()
     };
@@ -80,7 +92,8 @@ function addNewOrder(orderNumber, status) {
 
     orders.push(newOrder);
 
-    console.log(orders);
+    // Сбрабсываем номер нового заказа в форме
+    newOrderNumber.value = '';
 
     setOrdersToLocalStorage(orders);
     getOrdersFromLocalStorage();
@@ -158,11 +171,13 @@ function generateOrderTable() {
     let result = [];
     ordersTable.innerHTML = '';
 
-    console.log(getObjectFromLocalStorage('orders'));
+    // console.log(getObjectFromLocalStorage('orders'));
 
-    getObjectFromLocalStorage('orders').forEach((order) => {
-        result.push(renderOrder(order));
-    });
+    if (orders) {
+        getObjectFromLocalStorage('orders').forEach((order) => {
+            result.push(renderOrder(order));
+        });
+    }
 
     for(var i = 0; i < result.length; i++) {
         ordersListFragment.appendChild(result[i]);
@@ -271,7 +286,7 @@ addNewOrderButton.addEventListener('click', function() {
     addNewOrder(newOrderNumber.value, 'processing');
 });
 
-newOrderNumber.addEventListener('change', function() {
+newOrderNumber.addEventListener('keyup', function() {
     if (this.value) {
         addNewOrderButton.disabled = false;
     } else {
@@ -279,6 +294,12 @@ newOrderNumber.addEventListener('change', function() {
     }
 });
 
+newOrderNumber.addEventListener('keypress', function(e) {
+    var key = e.key;
+    if (key === 'Enter') {
+        addNewOrder(newOrderNumber.value, 'processing');
+    }
+});
 
 // Получаем все заказы из localStorage
 getOrdersFromLocalStorage();

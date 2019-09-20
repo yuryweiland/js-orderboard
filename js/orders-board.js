@@ -24,15 +24,17 @@ function generateOrderLists() {
     let processingResult = [];
     let readyResult = [];
 
-    getObjectFromLocalStorage('orders').forEach((order) => {
+    if (orders) {
+        getObjectFromLocalStorage('orders').forEach((order) => {
 
-        if (order.status === 'processing') {
-            processingResult.push(renderOrder(order));
-        } else if (order.status === 'ready') {
-            readyResult.push(renderOrder(order));
-        }
+            if (order.status === 'processing') {
+                processingResult.push(renderOrder(order));
+            } else if (order.status === 'ready') {
+                readyResult.push(renderOrder(order));
+            }
 
-    });
+        });
+    }
 
     for(var i = 0; i < processingResult.length; i++) {
         processingOrdersListFragment.appendChild(processingResult[i]);

@@ -22,7 +22,9 @@ body, html {
 }
 
 .status-container {
-    flex: 1;
+    width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .status-container h2 {
@@ -48,6 +50,7 @@ body, html {
 
 .orders-container .order p {
     font-size: 80px;
+    white-space: nowrap;
 }
 
 .panel-container {
