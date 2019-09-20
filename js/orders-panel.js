@@ -25,6 +25,8 @@ function getOrdersFromLocalStorage() {
     orders = JSON.parse(localStorage.getItem('orders'));
 
     generateOrderTable();
+    calculateProcessingButtonsElements();
+    calculateReadyButtonsElements();
     calculateRemoveButtonsElements();
 }
 
@@ -84,14 +86,26 @@ function addNewOrder(orderNumber, status) {
  */
 function editOrder(order, newOrderNumber, newStatus) {
     if (newOrderNumber) {
-        order.orderNumber = newOrderNumber;
+        for (var i in orders) {
+            if (orders[i].orderNumber === order.orderNumber) {
+                orders[i].orderNumber = newOrderNumber;
+                break;
+            }
+        }
     }
 
     if (newStatus) {
-        order.status = newStatus;
+        for (var i in orders) {
+            if (orders[i].orderNumber === order.orderNumber) {
+                orders[i].status = newStatus;
+                break;
+            }
+        }
     }
 
-    setOrdersToLocalStorage();
+    console.log('edited orders', orders);
+
+    setOrdersToLocalStorage(orders);
     getOrdersFromLocalStorage();
 }
 
@@ -116,9 +130,9 @@ function renderOrder(order) {
     orderRecord.innerHTML = '<td><input value="' + order.orderNumber + '"> <button>Обновить</button></td>' +
         '<td>' + order.status + '</td>' +
         '<td>' +
-        '<button class="processingOrder" orderId="' + order.id + '">Отправить в "Готовится"</button> ' +
-        '<button class="readyOrder" orderId="' + order.id + '">Отправить в "Готовые"</button> ' +
-        '<button class="removeOrder" orderId="' + order.id + '">Удалить</button>' +
+        '<button class="processingOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Отправить в "Готовится"</button> ' +
+        '<button class="readyOrder" orderId="' + order.id + '" orderNumber="\' + order.orderNumber + \'">Отправить в "Готовые"</button> ' +
+        '<button class="removeOrder" orderId="' + order.id + '" orderNumber="\' + order.orderNumber + \'">Удалить</button>' +
         '</td>';
     return orderRecord;
 }
@@ -148,14 +162,17 @@ function generateOrderTable() {
  * Обработка кнопки "Отправить в Готовые" для заказов
  */
 function calculateReadyButtonsElements() {
-    var readyButtons = document.querySelectorAll('.readyOrder');
+    var processingButtons = document.querySelectorAll('.readyOrder');
 
-    for (var i = 0; i < readyButtons.length; i++) {
-        readyButtons[i].addEventListener('click', function() {
+    for (var i = 0; i < processingButtons.length; i++) {
+        processingButtons[i].addEventListener('click', function() {
             let orderId = this.getAttribute("orderId");
 
-            addNewOrder(newOrderNumber, 'processing');
-            /// deleteOrder(orderId);
+            // Определяем, над каким заказом производим действия
+            let order = orders.filter((order) => order.id === +orderId)[0];
+
+            // Обновляем статус заказа на "Готовится"
+            editOrder(order, orderId, 'ready');
         });
     }
 }
@@ -170,7 +187,11 @@ function calculateProcessingButtonsElements() {
         processingButtons[i].addEventListener('click', function() {
             let orderId = this.getAttribute("orderId");
 
-            /// deleteOrder(orderId);
+            // Определяем, над каким заказом производим действия
+            let order = orders.filter((order) => order.id === +orderId)[0];
+
+            // Обновляем статус заказа на "Готовится"
+            editOrder(order, orderId, 'processing');
         });
     }
 }
