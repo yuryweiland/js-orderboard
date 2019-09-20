@@ -3,6 +3,9 @@ var dayOrders = [];
 var processingOrders = [];
 var readyOrders = [];
 
+var orderNumberInputs = document.querySelectorAll('.orderNumberInput');
+var updateOrderNumberButtons = document.querySelectorAll('.updateOrderNumber');
+
 var processingButtons = document.querySelectorAll('.processingOrder');
 var readyButtons = document.querySelectorAll('.readyOrder');
 var removeButtons = document.querySelectorAll('.removeOrder');
@@ -28,6 +31,7 @@ function getOrdersFromLocalStorage() {
     calculateProcessingButtonsElements();
     calculateReadyButtonsElements();
     calculateRemoveButtonsElements();
+    calculateUpdateOrderNumberButtonsElements();
 }
 
 /**
@@ -68,13 +72,17 @@ function showReadyOrders(todayISODate) {
 function addNewOrder(orderNumber, status) {
     const newOrder = {
         id: orders[orders.length - 1].id + 1,
-        orderNumber: orderNumber,
         status: status,
-        date: todayISODate
+        orderNumber: orderNumber.toString()
     };
 
+    console.log('newOrder', newOrder);
+
     orders.push(newOrder);
-    setOrdersToLocalStorage();
+
+    console.log(orders);
+
+    setOrdersToLocalStorage(orders);
     getOrdersFromLocalStorage();
 }
 
@@ -87,7 +95,7 @@ function addNewOrder(orderNumber, status) {
 function editOrder(order, newOrderNumber, newStatus) {
     if (newOrderNumber) {
         for (var i in orders) {
-            if (orders[i].orderNumber === order.orderNumber) {
+            if (orders[i].id === order.id) {
                 orders[i].orderNumber = newOrderNumber;
                 break;
             }
@@ -96,14 +104,12 @@ function editOrder(order, newOrderNumber, newStatus) {
 
     if (newStatus) {
         for (var i in orders) {
-            if (orders[i].orderNumber === order.orderNumber) {
+            if (orders[i].id === order.id) {
                 orders[i].status = newStatus;
                 break;
             }
         }
     }
-
-    console.log('edited orders', orders);
 
     setOrdersToLocalStorage(orders);
     getOrdersFromLocalStorage();
@@ -127,12 +133,12 @@ function deleteOrder(orderId) {
  */
 function renderOrder(order) {
     var orderRecord = document.createElement("tr");
-    orderRecord.innerHTML = '<td><input value="' + order.orderNumber + '"> <button>Обновить</button></td>' +
+    orderRecord.innerHTML = '<td><input value="' + order.orderNumber +'" orderNumber="' + order.orderNumber + '" id="orderNumberInput_'+ order.id +'"> <button class="updateOrderNumber"  orderId="' + order.id + '"  orderNumber="' + order.orderNumber + '">Обновить</button></td>' +
         '<td>' + order.status + '</td>' +
         '<td>' +
         '<button class="processingOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Отправить в "Готовится"</button> ' +
-        '<button class="readyOrder" orderId="' + order.id + '" orderNumber="\' + order.orderNumber + \'">Отправить в "Готовые"</button> ' +
-        '<button class="removeOrder" orderId="' + order.id + '" orderNumber="\' + order.orderNumber + \'">Удалить</button>' +
+        '<button class="readyOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Отправить в "Готовые"</button> ' +
+        '<button class="removeOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Удалить</button>' +
         '</td>';
     return orderRecord;
 }
@@ -142,7 +148,7 @@ function renderOrder(order) {
  */
 function generateOrderTable() {
     let result = [];
-    ordersTable.innerHTML = '<tr><th>Номер заказа</th><th>Текущий статус</th><th>Действия</th></tr>';
+    ordersTable.innerHTML = '';
 
     console.log(getObjectFromLocalStorage('orders'));
 
@@ -155,49 +161,55 @@ function generateOrderTable() {
     }
 
     ordersTable.appendChild(ordersListFragment);
+    reverseChildNodes(ordersTable);
+
     removeButtons = document.querySelectorAll('.removeOrder');
+    processingButtons = document.querySelectorAll('.processingOrder');
+    readyButtons = document.querySelectorAll('.readyOrder');
 }
 
 /**
- * Обработка кнопки "Отправить в Готовые" для заказов
+ * Обработчик кнопки "Отправить в Готовые" для заказов
  */
 function calculateReadyButtonsElements() {
-    var processingButtons = document.querySelectorAll('.readyOrder');
+    readyButtons = document.querySelectorAll('.readyOrder');
 
-    for (var i = 0; i < processingButtons.length; i++) {
-        processingButtons[i].addEventListener('click', function() {
+    for (var i = 0; i < readyButtons.length; i++) {
+        readyButtons[i].addEventListener('click', function() {
             let orderId = this.getAttribute("orderId");
+            let orderNumber = this.getAttribute("orderNumber");
 
             // Определяем, над каким заказом производим действия
             let order = orders.filter((order) => order.id === +orderId)[0];
 
             // Обновляем статус заказа на "Готовится"
-            editOrder(order, orderId, 'ready');
+            editOrder(order, orderNumber, 'ready');
         });
     }
 }
 
 /**
- * Обработка кнопки "Отправить в Готовится" для заказов
+ * Обработчик кнопки "Отправить в Готовится" для заказов
  */
 function calculateProcessingButtonsElements() {
-    var processingButtons = document.querySelectorAll('.processingOrder');
+    processingButtons = document.querySelectorAll('.processingOrder');
 
     for (var i = 0; i < processingButtons.length; i++) {
         processingButtons[i].addEventListener('click', function() {
             let orderId = this.getAttribute("orderId");
+            let orderNumber = this.getAttribute("orderNumber");
 
             // Определяем, над каким заказом производим действия
             let order = orders.filter((order) => order.id === +orderId)[0];
 
             // Обновляем статус заказа на "Готовится"
-            editOrder(order, orderId, 'processing');
+            editOrder(order, orderNumber, 'processing');
         });
     }
 }
 
 /**
- * Обработка кнопки "Удалить" для заказов
+ * Обработчик кнопки "Удалить" для заказов
  */
 function calculateRemoveButtonsElements() {
     removeButtons = document.querySelectorAll('.removeOrder');
@@ -212,11 +224,40 @@ function calculateRemoveButtonsElements() {
 }
 
 /**
+ * Обработчик кнопки "Обновить" для номеров заказов
+ */
+function calculateUpdateOrderNumberButtonsElements() {
+    updateOrderNumberButtons = document.querySelectorAll('.updateOrderNumber');
+    orderNumberInputs = document.querySelectorAll('.orderNumberInput');
+
+    for (var i = 0; i < updateOrderNumberButtons.length; i++) {
+        updateOrderNumberButtons[i].addEventListener('click', function() {
+            let orderId = this.getAttribute("orderId");
+            let inputId = 'orderNumberInput_' + orderId;
+
+            // Получаем значение из инпута с номером заказа
+            let newOrderNumberValue = document.getElementById(inputId).value;
+
+            // Определяем, над каким заказом производим действия
+            let order = orders.filter((order) => order.id === +orderId)[0];
+
+            // Обновляем статус заказа на "Готовится"
+            editOrder(order, newOrderNumberValue, order.status);
+        });
+    }
+}
+
+/**
  * Обработчик кнопки "Добавить тестовые заказы"
  */
 setTestOrdersButton.addEventListener('click', function() {
     setTestOrdersToLocalStorage();
     getOrdersFromLocalStorage();
+});
+
+addNewOrderButton.addEventListener('click', function() {
+
+    addNewOrder(newOrderNumber.value, 'new');
 });
 
 newOrderNumber.addEventListener('change', function() {

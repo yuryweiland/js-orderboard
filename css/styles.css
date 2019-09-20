@@ -59,10 +59,13 @@ body, html {
     margin: 0;
 }
 
+.panel-table-headers {
+    margin-top: 15px;
+}
+
 .panel-table {
     border: 1px #ccc solid;
     width: 100%;
-    margin-top: 15px;
 }
 
 .panel-table td, th {
