@@ -8,7 +8,7 @@ var readyOrdersListFragment = document.createDocumentFragment();
 /**
  * Рендерим внешний вид записи о заказе
  * @param order
- * @returns {HTMLDivElement}
+ * @returns {HTMLElement}
  */
 function renderOrder(order) {
     var orderRecord = document.createElement("div");
