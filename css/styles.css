@@ -1,7 +1,7 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Arial';
+    font-family: 'Arial', sans-serif;
 }
 
 .float-left {
@@ -19,6 +19,8 @@ body, html {
 .main-container {
     display: flex;
     flex-direction: row;
+    height: 100vh;
+    width: 100vw;
 }
 
 .status-container {
@@ -45,10 +47,15 @@ body, html {
 }
 
 .orders-container {
-    padding: 0 20px;
+    height: calc(100% - 320px);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 .orders-container .order {
+    width: calc(50% - 40px);
+    padding: 0 20px;
     transition: all 0.5s ease-in-out;
 }
 
