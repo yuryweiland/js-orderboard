@@ -25,13 +25,13 @@ todayDate.setMilliseconds(0);
 var todayISODate = todayDate.toISOString();
 
 function getOrdersFromLocalStorage() {
-    orders = JSON.parse(localStorage.getItem('orders'));
+    orders = getObjectFromLocalStorage('orders');
 
     generateOrderTable();
-    calculateProcessingButtonsElements();
-    calculateReadyButtonsElements();
-    calculateRemoveButtonsElements();
-    calculateUpdateOrderNumberButtonsElements();
+    initProcessingButtonsElements();
+    initReadyButtonsElements();
+    initRemoveButtonsElements();
+    initUpdateOrderNumberButtonsElements();
 }
 
 /**
@@ -72,24 +72,24 @@ function showReadyOrders(todayISODate) {
 function addNewOrder(orderNumber, status) {
     let setOrderId;
 
-    console.log('orders', orders);
-
-
     if (typeof orders === 'undefined' || !orders.length || orders === null) {
         setOrderId = 1;
     } else {
         setOrderId = orders[orders.length - 1].id + 1;
     }
 
-
+    // Формируем объект с новым заказом
     const newOrder = {
         id: setOrderId,
         status: status,
-        orderNumber: orderNumber.toString()
+        orderNumber: orderNumber.toString(),
+        isLastReady: false
     };
 
-    console.log('newOrder', newOrder);
+    // Убираем метку isLastReady для всех заказов
+    unmarkLastReadyOrder(orders);
 
+    // Добавляем новый заказ
     orders.push(newOrder);
 
     // Сбрабсываем номер нового заказа в форме
@@ -116,9 +116,19 @@ function editOrder(order, newOrderNumber, newStatus) {
     }
 
     if (newStatus) {
+
         for (var i in orders) {
             if (orders[i].id === order.id) {
                 orders[i].status = newStatus;
+
+                if (newStatus === 'ready') {
+                    // Убираем метку isLastReady для всех заказов
+                    unmarkLastReadyOrder(orders);
+
+                    // Помечаем заказ как последний готовый
+                    orders[i].isLastReady = true;
+                }
+
                 break;
             }
         }
@@ -165,6 +175,16 @@ function renderOrder(order) {
 }
 
 /**
+ * Убираем пометку isLastReady у всех текущих заказов
+ * @param orders
+ */
+function unmarkLastReadyOrder(orders) {
+    orders.forEach((o) => {
+        o.isLastReady = false;
+    });
+}
+
+/**
  * Генерируем в html таблицу с заказами
  */
 function generateOrderTable() {
@@ -194,7 +214,7 @@ function generateOrderTable() {
 /**
  * Обработчик кнопки "Отправить в Готовые" для заказов
  */
-function calculateReadyButtonsElements() {
+function initReadyButtonsElements() {
     readyButtons = document.querySelectorAll('.readyOrder');
 
     for (var i = 0; i < readyButtons.length; i++) {
@@ -214,7 +234,7 @@ function calculateReadyButtonsElements() {
 /**
  * Обработчик кнопки "Отправить в Готовится" для заказов
  */
-function calculateProcessingButtonsElements() {
+function initProcessingButtonsElements() {
     processingButtons = document.querySelectorAll('.processingOrder');
 
     for (var i = 0; i < processingButtons.length; i++) {
@@ -234,7 +254,7 @@ function calculateProcessingButtonsElements() {
 /**
  * Обработчик кнопки "Удалить" для заказов
  */
-function calculateRemoveButtonsElements() {
+function initRemoveButtonsElements() {
     removeButtons = document.querySelectorAll('.removeOrder');
 
     for (var i = 0; i < removeButtons.length; i++) {
@@ -249,7 +269,7 @@ function calculateRemoveButtonsElements() {
 /**
  * Обработчик кнопки "Обновить" для номеров заказов
  */
-function calculateUpdateOrderNumberButtonsElements() {
+function initUpdateOrderNumberButtonsElements() {
     updateOrderNumberButtons = document.querySelectorAll('.updateOrderNumber');
     orderNumberInputs = document.querySelectorAll('.orderNumberInput');
 
@@ -273,27 +293,30 @@ function calculateUpdateOrderNumberButtonsElements() {
 /**
  * Обработчик кнопки "Добавить тестовые заказы"
  */
-setTestOrdersButton.addEventListener('click', function() {
-    setTestOrdersToLocalStorage();
-    getOrdersFromLocalStorage();
-});
+if (setTestOrdersButton) {
+    setTestOrdersButton.addEventListener('click', function() {
+        setTestOrdersToLocalStorage();
+        getOrdersFromLocalStorage();
+    });
+}
 
 /**
  * Обработчик кнопки добавления нового заказа
- * (заказ добавляется в статус "готовится"
+ * (заказ добавляется в статус "готовится")
  */
 addNewOrderButton.addEventListener('click', function() {
     addNewOrder(newOrderNumber.value, 'processing');
 });
 
+/**
+ * Обработчик действий с полем ввода номера заказа
+ */
+// На нажатие любой кнопки
 newOrderNumber.addEventListener('keyup', function() {
-    if (this.value) {
-        addNewOrderButton.disabled = false;
-    } else {
-        addNewOrderButton.disabled = true;
-    }
+    addNewOrderButton.disabled = !this.value;
 });
 
+// На нажатие кнопки Enter
 newOrderNumber.addEventListener('keypress', function(e) {
     var key = e.key;
     if (key === 'Enter') {

@@ -48,9 +48,18 @@ body, html {
     padding: 0 20px;
 }
 
+.orders-container .order {
+    transition: all 0.5s ease-in-out;
+}
+
 .orders-container .order p {
     font-size: 80px;
+    margin: 15px 0;
     white-space: nowrap;
+}
+
+#readyOrders .last-ready {
+    background: #ff0;
 }
 
 .panel-container {

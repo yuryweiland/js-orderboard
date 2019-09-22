@@ -14,6 +14,11 @@ function renderOrder(order) {
     var orderRecord = document.createElement("div");
     orderRecord.className="order";
     orderRecord.innerHTML = '<p>' + order.orderNumber + '</p>';
+
+    if (order.isLastReady && order.status === 'ready') {
+        orderRecord.classList.add('last-ready')
+    }
+
     return orderRecord;
 }
 
