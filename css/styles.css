@@ -34,7 +34,7 @@ body, html {
     width: 100%;
     padding: 20px;
     margin: 0;
-    font-size: 100px;
+    font-size: 80px;
     color: #fff;
 }
 
@@ -60,7 +60,7 @@ body, html {
 }
 
 .orders-container .order p {
-    font-size: 80px;
+    font-size: 65px;
     margin: 15px 0;
     white-space: nowrap;
 }
