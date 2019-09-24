@@ -32,6 +32,7 @@ body, html {
 .status-container h2 {
     display: block;
     width: 100%;
+    font-weight: normal;
     padding: 20px;
     margin: 0;
     font-size: 80px;
@@ -47,7 +48,7 @@ body, html {
 }
 
 .orders-container {
-    height: calc(100% - 320px);
+    height: calc(100% - 150px);
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
