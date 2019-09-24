@@ -1,8 +1,9 @@
-# Система управления табло заказов
+# Cafe Orders Board & Chief Panel 
 
-1. На мониторе сотрудника запускаем файл index.html
-2. На табло запускаем файл panel.html
+Contents:
+1. ./index.html - Orders board for clients
+2. ./panel.html - Orders panel for cafe Chief and administration
 
-Размеры шрифтов для экранов регулируются в файле css/style.css
-.status-container h2 (font-size) - размер шрифта заголовков "Готовы" и "Готовятся"
-.orders-container .order p (font-size) - размер шрифта заказов
+To change styles you may edit file ./css/style.css
+.status-container h2 (font-size) - font size for "Cooking now" and "Ready" titles
+.orders-container .order p (font-size) - font size for order number in lists (for clients)

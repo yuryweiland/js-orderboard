@@ -22,6 +22,7 @@ todayDate.setMinutes(0);
 todayDate.setSeconds(0);
 todayDate.setMilliseconds(0);
 
+// Will be used in future for orders statistic
 var todayISODate = todayDate.toISOString();
 
 function getOrdersFromLocalStorage() {
@@ -35,37 +36,7 @@ function getOrdersFromLocalStorage() {
 }
 
 /**
- * Показать все заказы за сегодня
- * @param todayISODate
- * @returns {*[]}
- */
-function setDayOrders(todayISODate) {
-    dayOrders = orders.filter((order) => order.date === todayISODate);
-    localStorage.setItem('dayOrders', JSON.stringify(dayOrders));
-}
-
-/**
- * Показать заказы в работе на данный момент
- * @param todayISODate
- * @returns {*[]}
- */
-function setProcessingOrders(todayISODate) {
-    processingOrders = orders.filter((order) => order.date === todayISODate && order.status === 'processing');
-    localStorage.setItem('processingOrders', JSON.stringify(processingOrders));
-}
-
-/**
- * Показать готовые заказы на данный момент
- * @param todayISODate
- * @returns {*[]}
- */
-function showReadyOrders(todayISODate) {
-    readyOrders = orders.filter((order) => order.date === todayISODate && order.status === 'ready');
-    localStorage.setItem('readyOrders', JSON.stringify(readyOrders));
-}
-
-/**
- * Добавление нового заказа
+ * Add new order
  * @param orderNumber
  * @param status
  */
@@ -78,7 +49,7 @@ function addNewOrder(orderNumber, status) {
         setOrderId = orders[orders.length - 1].id + 1;
     }
 
-    // Формируем объект с новым заказом
+    // Create new order object
     const newOrder = {
         id: setOrderId,
         status: status,
@@ -86,13 +57,13 @@ function addNewOrder(orderNumber, status) {
         isLastReady: false
     };
 
-    // Убираем метку isLastReady для всех заказов
+    // Remove mark "isLastReady" for all orders
     unmarkLastReadyOrder(orders);
 
-    // Добавляем новый заказ
+    // Add new order to array
     orders.push(newOrder);
 
-    // Сбрабсываем номер нового заказа в форме
+    // Clear new order number input value
     newOrderNumber.value = '';
 
     setOrdersToLocalStorage(orders);
@@ -122,10 +93,10 @@ function editOrder(order, newOrderNumber, newStatus) {
                 orders[i].status = newStatus;
 
                 if (newStatus === 'ready') {
-                    // Убираем метку isLastReady для всех заказов
+                    // Remove mark "isLastReady" for all orders
                     unmarkLastReadyOrder(orders);
 
-                    // Помечаем заказ как последний готовый
+                    // mark order as last ready
                     orders[i].isLastReady = true;
                 }
 
@@ -139,7 +110,7 @@ function editOrder(order, newOrderNumber, newStatus) {
 }
 
 /**
- * Удаление заказа
+ * Remove order
  * @param orderId
  */
 function deleteOrder(orderId) {
@@ -150,9 +121,9 @@ function deleteOrder(orderId) {
 }
 
 /**
- * Рендерим внешний вид записи о заказе в таблице
+ * Render order record in panel
  * @param order
- * @returns {HTMLDivElement}
+ * @returns {HTMLElement}
  */
 function renderOrder(order) {
     var orderRecord = document.createElement("tr");
@@ -164,18 +135,18 @@ function renderOrder(order) {
         statusMessage = 'Готов';
     }
 
-    orderRecord.innerHTML = '<td class="order-number"><input value="' + order.orderNumber +'" orderNumber="' + order.orderNumber + '" id="orderNumberInput_'+ order.id +'"> <button class="updateOrderNumber"  orderId="' + order.id + '"  orderNumber="' + order.orderNumber + '">Обновить</button></td>' +
+    orderRecord.innerHTML = '<td class="order-number"><input value="' + order.orderNumber +'" orderNumber="' + order.orderNumber + '" id="orderNumberInput_'+ order.id +'"> <button class="updateOrderNumber"  orderId="' + order.id + '"  orderNumber="' + order.orderNumber + '">Rename</button></td>' +
         '<td width="129">' + statusMessage + '</td>' +
         '<td width="400">' +
-        '<button class="processingOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Отправить в "Готовится"</button> ' +
-        '<button class="readyOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Отправить в "Готовые"</button> ' +
-        '<button class="removeOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Удалить</button>' +
+        '<button class="processingOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Mark as "Cooking now"</button> ' +
+        '<button class="readyOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Mark as "Ready"</button> ' +
+        '<button class="removeOrder" orderId="' + order.id + '" orderNumber="' + order.orderNumber + '">Remove</button>' +
         '</td>';
     return orderRecord;
 }
 
 /**
- * Убираем пометку isLastReady у всех текущих заказов
+ * Remove isLastReady mark for all orders
  * @param orders
  */
 function unmarkLastReadyOrder(orders) {
@@ -185,13 +156,11 @@ function unmarkLastReadyOrder(orders) {
 }
 
 /**
- * Генерируем в html таблицу с заказами
+ * Generate order table-list in panel
  */
 function generateOrderTable() {
     let result = [];
     ordersTable.innerHTML = '';
-
-    // console.log(getObjectFromLocalStorage('orders'));
 
     if (orders) {
         getObjectFromLocalStorage('orders').forEach((order) => {
@@ -212,7 +181,7 @@ function generateOrderTable() {
 }
 
 /**
- * Обработчик кнопки "Отправить в Готовые" для заказов
+ * Handler for button "Mark as Ready"
  */
 function initReadyButtonsElements() {
     readyButtons = document.querySelectorAll('.readyOrder');
@@ -232,7 +201,7 @@ function initReadyButtonsElements() {
 }
 
 /**
- * Обработчик кнопки "Отправить в Готовится" для заказов
+ * Handler for button "Mark as Cooking now"
  */
 function initProcessingButtonsElements() {
     processingButtons = document.querySelectorAll('.processingOrder');
@@ -252,7 +221,7 @@ function initProcessingButtonsElements() {
 }
 
 /**
- * Обработчик кнопки "Удалить" для заказов
+ * Handler for button "Remove"
  */
 function initRemoveButtonsElements() {
     removeButtons = document.querySelectorAll('.removeOrder');
@@ -267,7 +236,7 @@ function initRemoveButtonsElements() {
 }
 
 /**
- * Обработчик кнопки "Обновить" для номеров заказов
+ * Handler for button "Rename"
  */
 function initUpdateOrderNumberButtonsElements() {
     updateOrderNumberButtons = document.querySelectorAll('.updateOrderNumber');
@@ -291,7 +260,7 @@ function initUpdateOrderNumberButtonsElements() {
 }
 
 /**
- * Обработчик кнопки "Добавить тестовые заказы"
+ * Handler for button "Set test orders data"
  */
 if (setTestOrdersButton) {
     setTestOrdersButton.addEventListener('click', function() {
@@ -301,22 +270,22 @@ if (setTestOrdersButton) {
 }
 
 /**
- * Обработчик кнопки добавления нового заказа
- * (заказ добавляется в статус "готовится")
+ * Handler for button "Add new order"
+ * (new order sets in "Cooking now" status)
  */
 addNewOrderButton.addEventListener('click', function() {
     addNewOrder(newOrderNumber.value, 'processing');
 });
 
 /**
- * Обработчик действий с полем ввода номера заказа
+ * Handler for "new oder number" input field
  */
-// На нажатие любой кнопки
+// On any key pressed
 newOrderNumber.addEventListener('keyup', function() {
     addNewOrderButton.disabled = !this.value;
 });
 
-// На нажатие кнопки Enter
+// On "Enter" key pressed
 newOrderNumber.addEventListener('keypress', function(e) {
     var key = e.key;
     if (key === 'Enter') {
@@ -325,9 +294,11 @@ newOrderNumber.addEventListener('keypress', function(e) {
 });
 
 
-// Устанавливаем заказы в localstorage
+// Set all orders in localStorage
 setOrdersToLocalStorage(orders);
 
-// Получаем все заказы из localStorage
+// Get all orders from localStorage
 getOrdersFromLocalStorage();
+
+// disable "Add new Order" button by default
 addNewOrderButton.disabled = true;

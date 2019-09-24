@@ -6,7 +6,7 @@ var processingOrdersListFragment = document.createDocumentFragment();
 var readyOrdersListFragment = document.createDocumentFragment();
 
 /**
- * Рендерим внешний вид записи о заказе
+ * Render of order's record template
  * @param order
  * @returns {HTMLElement}
  */
@@ -23,7 +23,7 @@ function renderOrder(order) {
 }
 
 /**
- * Генерируем в html списки заказов ("готовятся" и "готовы")
+ * Generate "Cooking now" & "Ready" orders lists
  */
 function generateOrderLists() {
     let processingResult = [];
@@ -57,14 +57,14 @@ function generateOrderLists() {
 }
 
 /**
- * Обновление списков заказов "готовятся" и "готовы" раз в секунду
+ * Refresh orders list with interval (in milliseconds)
  */
 function refreshOrderLists() {
     window.setInterval(function() {
         processingOrdersList.innerHTML = '';
         readyOrdersList.innerHTML = '';
         generateOrderLists();
-    }, 1000);
+    }, 1000); // set number in milliseconds here (ex., 1000 for 1 sec time interval)
 }
 
 generateOrderLists();

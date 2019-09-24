@@ -1,12 +1,12 @@
 /**
- * Получаем тестовые заказы из локального массива
+ * Set orders to localStorage
  */
 function setOrdersToLocalStorage(orders) {
     localStorage.setItem('orders', JSON.stringify(orders));
 }
 
 /**
- * Возвращает объект из localStorage
+ * Returns Javascript object by localStorage key
  * @param objectName
  * @returns {any}
  */
@@ -15,7 +15,7 @@ function getObjectFromLocalStorage(objectName) {
 }
 
 /**
- * Сортируем по убыванию заказы в списках
+ * Reverse child nodes in orders lists (HTML fragments)
  * @param node
  * @returns {*}
  */
@@ -31,39 +31,45 @@ function reverseChildNodes(node) {
 }
 
 /**
- * Устанавливаем тестовые данные о заказах
+ * Set test orders data to localStorage
  */
 function setTestOrdersToLocalStorage() {
     localStorage.setItem('orders', JSON.stringify([
         {
             id: 1,
             status: 'ready',
-            orderNumber: '12'
+            orderNumber: '12',
+            isLatestReady: false
         },
         {
             id: 2,
             status: 'processing',
-            orderNumber: '13'
+            orderNumber: '13',
+            isLatestReady: false
         },
         {
             id: 3,
             status: 'processing',
-            orderNumber: '14'
+            orderNumber: '14',
+            isLatestReady: false
         },
         {
             id: 4,
             status: 'processing',
-            orderNumber: '15'
+            orderNumber: '15',
+            isLatestReady: false
         },
         {
             id: 5,
             status: 'ready',
-            orderNumber: '16'
+            orderNumber: '16',
+            isLatestReady: true
         },
         {
             id: 6,
             status: 'processing',
-            orderNumber: '17'
+            orderNumber: '17',
+            isLatestReady: false
         },
     ]));
 }
