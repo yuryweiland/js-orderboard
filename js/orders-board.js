@@ -57,10 +57,16 @@ function generateOrderLists() {
 }
 
 /**
- * Обновление списков заказов "готовятся" и "готовы" раз в секунду
+ * Обновление данных приложения раз в секунду:
+ * - списков заказов "готовятся" и "готовы"
+ * - настроек приложения (отображения рекламного блока и тп)
  */
-function refreshOrderLists() {
+function refreshAppData() {
     window.setInterval(function() {
+        // Обновление настроек приложения
+        getObjectFromLocalStorage('appSettings').enableAdvert ? document.body.classList.add('enable-advert') : document.body.classList.remove('enable-advert');
+
+        // Обновление списков заказов
         processingOrdersList.innerHTML = '';
         readyOrdersList.innerHTML = '';
         generateOrderLists();
@@ -68,4 +74,4 @@ function refreshOrderLists() {
 }
 
 generateOrderLists();
-refreshOrderLists();
+refreshAppData();

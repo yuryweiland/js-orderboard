@@ -1,8 +1,15 @@
 /**
- * Получаем тестовые заказы из локального массива
+ * Сохраняем данные о заказах в LocalStorage
  */
 function setOrdersToLocalStorage(orders) {
     localStorage.setItem('orders', JSON.stringify(orders));
+}
+
+/**
+ * Сохраняем данные о настройках приложения в LocalStorage
+ */
+function setAppSettingsToLocalStorage(settings) {
+    localStorage.setItem('appSettings', JSON.stringify(settings));
 }
 
 /**

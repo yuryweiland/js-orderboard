@@ -3,6 +3,11 @@ var dayOrders = [];
 var processingOrders = [];
 var readyOrders = [];
 
+// Настройки приложения
+var appSettings = {
+    enableAdvert: false
+};
+
 var orderNumberInputs = document.querySelectorAll('.orderNumberInput');
 var updateOrderNumberButtons = document.querySelectorAll('.updateOrderNumber');
 
@@ -16,6 +21,8 @@ var ordersListFragment = document.createDocumentFragment();
 
 var addNewOrderButton = document.getElementById('addNewOrderButton');
 var newOrderNumber = document.getElementById('newOrderNumber');
+var enableAdvertCheckbox = document.getElementById('enableAdvertCheckbox');
+var enableAdvertInfo = document.getElementById('enableAdvertInfo');
 
 var todayDate = new Date();
 todayDate.setMinutes(0);
@@ -324,9 +331,23 @@ newOrderNumber.addEventListener('keypress', function(e) {
     }
 });
 
+/**
+ * Обработчик клика чекбокса "Отображать рекламный блок на Табло заказов"
+ */
+enableAdvertCheckbox.addEventListener('change', function(e) {
+    e.target.checked ? appSettings.enableAdvert = true : appSettings.enableAdvert = false;
+    setAppSettingsToLocalStorage(appSettings);
+    enableAdvertInfo.classList.toggle('hidden');
+});
 
-// Устанавливаем заказы в localstorage
+// Сохраняем настройки приложения в localstorage
+setAppSettingsToLocalStorage(appSettings);
+
+// Сохраняем заказы в localstorage
 setOrdersToLocalStorage(orders);
+
+// Получаем настройки приложения из localstorage
+getObjectFromLocalStorage('appSettings');
 
 // Получаем все заказы из localStorage
 getOrdersFromLocalStorage();
