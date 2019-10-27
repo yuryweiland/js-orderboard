@@ -5,7 +5,8 @@ var readyOrders = [];
 
 // Настройки приложения
 var appSettings = {
-    enableAdvert: false
+    enableAdvert: false,
+    advertFiles: []
 };
 
 var orderNumberInputs = document.querySelectorAll('.orderNumberInput');
@@ -23,6 +24,7 @@ var addNewOrderButton = document.getElementById('addNewOrderButton');
 var newOrderNumber = document.getElementById('newOrderNumber');
 var enableAdvertCheckbox = document.getElementById('enableAdvertCheckbox');
 var enableAdvertInfo = document.getElementById('enableAdvertInfo');
+var advertFileInput = document.getElementById('advertFileInput');
 
 var todayDate = new Date();
 todayDate.setMinutes(0);
@@ -298,6 +300,38 @@ function initUpdateOrderNumberButtonsElements() {
 }
 
 /**
+ * Читаем выбранные файлы и добавляем их в рекламный блок
+ * @param evt
+ */
+function readAdvertFiles(evt) {
+    //Получаем список файлов из fileInput-а
+    var files = evt.target.files;
+
+    if (files) {
+        // Если выбраны файлы - обновляем список файлов в appSettings
+        appSettings.advertFiles = [];
+
+        for (var i = 0, f; f = files[i]; i++) {
+            var r = new FileReader();
+            r.onload = (function(f) {
+                return function() {
+                    appSettings.advertFiles.push('advert/' + f.name);
+
+                    // Сохраняем пути файлов в localStorage
+                    setAppSettingsToLocalStorage(appSettings);
+                };
+            })(f);
+
+            r.readAsText(f);
+        }
+
+    } else {
+        alert("Ошибка загрузки файлов");
+    }
+
+}
+
+/**
  * Обработчик кнопки "Добавить тестовые заказы"
  */
 if (setTestOrdersButton) {
@@ -339,6 +373,8 @@ enableAdvertCheckbox.addEventListener('change', function(e) {
     setAppSettingsToLocalStorage(appSettings);
     enableAdvertInfo.classList.toggle('hidden');
 });
+
+advertFileInput.addEventListener('change', readAdvertFiles, false);
 
 // Сохраняем настройки приложения в localstorage
 setAppSettingsToLocalStorage(appSettings);

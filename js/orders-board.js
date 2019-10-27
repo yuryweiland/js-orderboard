@@ -1,9 +1,14 @@
+var appSettings = getObjectFromLocalStorage('appSettings');
 var orders = [];
+var cachedAdvertFiles = [];
+
 var processingOrdersList = document.getElementById('processingOrders');
 var readyOrdersList = document.getElementById('readyOrders');
+var advertContainer = document.getElementById('advertContainer');
 
 var processingOrdersListFragment = document.createDocumentFragment();
 var readyOrdersListFragment = document.createDocumentFragment();
+var advertFilesFragment = document.createDocumentFragment();
 
 /**
  * Рендерим внешний вид записи о заказе
@@ -20,6 +25,19 @@ function renderOrder(order) {
     }
 
     return orderRecord;
+}
+
+/**
+ * Рендерим тег с изображением для рекламного блока
+ * @param fileUrl
+ * @returns {string}
+ */
+function renderAdvertImage(fileUrl) {
+    var advertImageRecord = document.createElement("div");
+    advertImageRecord.className="advert-image";
+    advertImageRecord.innerHTML = "<img src=" + fileUrl + ">";
+
+    return advertImageRecord;
 }
 
 /**
@@ -57,11 +75,34 @@ function generateOrderLists() {
 }
 
 /**
+ * Отображаем файлы в рекламном блоке
+ */
+function showAdvertFiles() {
+    let advertFilesResult = [];
+    let advertFiles = appSettings.advertFiles;
+
+    if (advertFiles.length) {
+
+        advertFiles.forEach((fileUrl) => {
+            advertFilesResult.push(renderAdvertImage(fileUrl));
+        });
+
+        for(var i = 0; i < advertFilesResult.length; i++) {
+            advertFilesFragment.appendChild(advertFilesResult[i]);
+        }
+
+        advertContainer.appendChild(advertFilesFragment);
+    }
+}
+
+/**
  * Обновление данных приложения раз в секунду:
  * - списков заказов "готовятся" и "готовы"
  * - настроек приложения (отображения рекламного блока и тп)
  */
 function refreshAppData() {
+    //var cachedAdvertFiles = [...getObjectFromLocalStorage('appSettings').advertFiles];
+
     window.setInterval(function() {
         // Обновление настроек приложения
         getObjectFromLocalStorage('appSettings').enableAdvert ? document.body.classList.add('enable-advert') : document.body.classList.remove('enable-advert');
@@ -69,9 +110,22 @@ function refreshAppData() {
         // Обновление списков заказов
         processingOrdersList.innerHTML = '';
         readyOrdersList.innerHTML = '';
+
+
+        // debugger;
+
+        // Обновляем файлы в рекламном блоке только при обновлении их списка в localStorage
+        if (JSON.stringify(cachedAdvertFiles) !== JSON.stringify(getObjectFromLocalStorage('appSettings').advertFiles)) {
+            cachedAdvertFiles = [...getObjectFromLocalStorage('appSettings').advertFiles];
+
+            advertContainer.innerHTML = '';
+            showAdvertFiles();
+        }
+
         generateOrderLists();
     }, 1000);
 }
 
 generateOrderLists();
+showAdvertFiles();
 refreshAppData();
