@@ -1,5 +1,5 @@
 var appSettings = getObjectFromLocalStorage('appSettings');
-var orders = [];
+var orders = getObjectFromLocalStorage('orders');
 
 var processingOrdersList = document.getElementById('processingOrders');
 var readyOrdersList = document.getElementById('readyOrders');
@@ -49,7 +49,7 @@ function generateOrderLists() {
     readyOrdersList.innerHTML = '';
 
     if (orders) {
-        getObjectFromLocalStorage('orders').forEach((order) => {
+        orders.forEach((order) => {
 
             if (order.status === 'processing') {
                 processingResult.push(renderOrder(order));
