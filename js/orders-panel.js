@@ -17,7 +17,6 @@ var readyButtons = document.querySelectorAll('.readyOrder');
 var removeButtons = document.querySelectorAll('.removeOrder');
 
 var ordersTable = document.getElementById('ordersTable');
-var setTestOrdersButton = document.getElementById('setTestOrders');
 var ordersListFragment = document.createDocumentFragment();
 
 var addNewOrderButton = document.getElementById('addNewOrderButton');
@@ -200,8 +199,6 @@ function generateOrderTable() {
     let result = [];
     ordersTable.innerHTML = '';
 
-    // console.log(getObjectFromLocalStorage('orders'));
-
     if (orders) {
         getObjectFromLocalStorage('orders').forEach((order) => {
             result.push(renderOrder(order));
@@ -329,16 +326,6 @@ function readAdvertFiles(evt) {
         alert("Ошибка загрузки файлов");
     }
 
-}
-
-/**
- * Обработчик кнопки "Добавить тестовые заказы"
- */
-if (setTestOrdersButton) {
-    setTestOrdersButton.addEventListener('click', function() {
-        setTestOrdersToLocalStorage();
-        getOrdersFromLocalStorage();
-    });
 }
 
 /**

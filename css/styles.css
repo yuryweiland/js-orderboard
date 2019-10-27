@@ -4,6 +4,10 @@ body, html {
     font-family: 'Arial', sans-serif;
 }
 
+body.orders-board {
+    overflow: hidden;
+}
+
 body.enable-advert {
     display: flex;
 }

@@ -1,6 +1,5 @@
 var appSettings = getObjectFromLocalStorage('appSettings');
 var orders = [];
-var cachedAdvertFiles = [];
 
 var processingOrdersList = document.getElementById('processingOrders');
 var readyOrdersList = document.getElementById('readyOrders');
@@ -30,7 +29,7 @@ function renderOrder(order) {
 /**
  * Рендерим тег с изображением для рекламного блока
  * @param fileUrl
- * @returns {string}
+ * @returns {HTMLElement}
  */
 function renderAdvertImage(fileUrl) {
     var advertImageRecord = document.createElement("div");
@@ -46,6 +45,8 @@ function renderAdvertImage(fileUrl) {
 function generateOrderLists() {
     let processingResult = [];
     let readyResult = [];
+    processingOrdersList.innerHTML = '';
+    readyOrdersList.innerHTML = '';
 
     if (orders) {
         getObjectFromLocalStorage('orders').forEach((order) => {
@@ -71,7 +72,15 @@ function generateOrderLists() {
 
     reverseChildNodes(processingOrdersList);
     reverseChildNodes(readyOrdersList);
+}
 
+/**
+ * Определяем, показывать ли рекламный блок в табло
+ */
+function enableAdvertContainer() {
+    appSettings.enableAdvert && appSettings.advertFiles.length ?
+        document.body.classList.add('enable-advert') :
+        document.body.classList.remove('enable-advert');
 }
 
 /**
@@ -79,11 +88,11 @@ function generateOrderLists() {
  */
 function showAdvertFiles() {
     let advertFilesResult = [];
-    let advertFiles = appSettings.advertFiles;
+    advertContainer.innerHTML = '';
 
-    if (advertFiles.length) {
+    if (appSettings.advertFiles.length) {
 
-        advertFiles.forEach((fileUrl) => {
+        appSettings.advertFiles.forEach((fileUrl) => {
             advertFilesResult.push(renderAdvertImage(fileUrl));
         });
 
@@ -101,31 +110,24 @@ function showAdvertFiles() {
  * - настроек приложения (отображения рекламного блока и тп)
  */
 function refreshAppData() {
-    //var cachedAdvertFiles = [...getObjectFromLocalStorage('appSettings').advertFiles];
+    window.addEventListener('storage', function (e) {
 
-    window.setInterval(function() {
-        // Обновление настроек приложения
-        getObjectFromLocalStorage('appSettings').enableAdvert ? document.body.classList.add('enable-advert') : document.body.classList.remove('enable-advert');
+        if (e.key === 'orders' && e.newValue !== e.oldValue) {
+            // Обновление списков заказов
+            generateOrderLists();
+        }
 
-        // Обновление списков заказов
-        processingOrdersList.innerHTML = '';
-        readyOrdersList.innerHTML = '';
-
-
-        // debugger;
-
-        // Обновляем файлы в рекламном блоке только при обновлении их списка в localStorage
-        if (JSON.stringify(cachedAdvertFiles) !== JSON.stringify(getObjectFromLocalStorage('appSettings').advertFiles)) {
-            cachedAdvertFiles = [...getObjectFromLocalStorage('appSettings').advertFiles];
-
-            advertContainer.innerHTML = '';
+        if (e.key === 'appSettings' && e.newValue !== e.oldValue) {
+            // Обновление настроек приложения
+            appSettings = getObjectFromLocalStorage('appSettings');
+            enableAdvertContainer();
             showAdvertFiles();
         }
 
-        generateOrderLists();
-    }, 1000);
+    }, false);
 }
 
 generateOrderLists();
+enableAdvertContainer();
 showAdvertFiles();
 refreshAppData();
