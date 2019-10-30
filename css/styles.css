@@ -26,12 +26,7 @@ body.enable-advert .advert-container {
     font-size: 30px;
 }
 
-body.enable-advert .advert-container div.advert-image {
-    width: 100%;
-    height: 100%;
-}
-
-body.enable-advert .advert-container div.advert-image img {
+body.enable-advert .advert-container img#advertImageEl {
     width: 100%;
     height: 100%;
 }

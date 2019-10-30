@@ -1,13 +1,13 @@
-var appSettings = getObjectFromLocalStorage('appSettings');
-var orders = [];
+var appSettings = getObjectFromLocalStorage('appSettings') ? getObjectFromLocalStorage('appSettings') : {enableAdvert: false, advertFiles: []};
+var orders = getObjectFromLocalStorage('orders').length ? getObjectFromLocalStorage('orders') : [];
 
 var processingOrdersList = document.getElementById('processingOrders');
 var readyOrdersList = document.getElementById('readyOrders');
-var advertContainer = document.getElementById('advertContainer');
+var advertImageEl = document.getElementById('advertImageEl');
+let advertImageIndex = 0;
 
 var processingOrdersListFragment = document.createDocumentFragment();
 var readyOrdersListFragment = document.createDocumentFragment();
-var advertFilesFragment = document.createDocumentFragment();
 
 /**
  * Рендерим внешний вид записи о заказе
@@ -24,19 +24,6 @@ function renderOrder(order) {
     }
 
     return orderRecord;
-}
-
-/**
- * Рендерим тег с изображением для рекламного блока
- * @param fileUrl
- * @returns {HTMLElement}
- */
-function renderAdvertImage(fileUrl) {
-    var advertImageRecord = document.createElement("div");
-    advertImageRecord.className="advert-image";
-    advertImageRecord.innerHTML = "<img src=" + fileUrl + ">";
-
-    return advertImageRecord;
 }
 
 /**
@@ -78,30 +65,27 @@ function generateOrderLists() {
  * Определяем, показывать ли рекламный блок в табло
  */
 function enableAdvertContainer() {
-    appSettings.enableAdvert && appSettings.advertFiles.length ?
-        document.body.classList.add('enable-advert') :
+    if (appSettings.enableAdvert && appSettings.advertFiles.length) {
+
+        // Показываем рекламный блок
+        document.body.classList.add('enable-advert');
+
+        // Показываем изображение в рекламном блоке
+        changeAdvertImage(appSettings.advertFiles);
+    } else {
+
+        // Скрываем рекламный блок
         document.body.classList.remove('enable-advert');
+    }
 }
 
 /**
- * Отображаем файлы в рекламном блоке
+ * Подменяем путь у изображения id="advertImageEl" итеративно
+ * из массива advertFiles
+ * @param advertFiles
  */
-function showAdvertFiles() {
-    let advertFilesResult = [];
-    advertContainer.innerHTML = '';
-
-    if (appSettings.advertFiles.length) {
-
-        appSettings.advertFiles.forEach((fileUrl) => {
-            advertFilesResult.push(renderAdvertImage(fileUrl));
-        });
-
-        for(var i = 0; i < advertFilesResult.length; i++) {
-            advertFilesFragment.appendChild(advertFilesResult[i]);
-        }
-
-        advertContainer.appendChild(advertFilesFragment);
-    }
+function changeAdvertImage(advertFiles) {
+    advertImageEl.src = advertFiles[advertImageIndex++ % advertFiles.length];
 }
 
 /**
@@ -122,13 +106,23 @@ function refreshAppData() {
             // Обновление настроек приложения
             appSettings = getObjectFromLocalStorage('appSettings');
             enableAdvertContainer();
-            showAdvertFiles();
-        }
 
-    }, false);
+            // Если в панели выбраны файлы для показа,
+            // обновляем их в рекламном блоке
+            if (appSettings.advertFiles && appSettings.advertFiles.length) {
+                changeAdvertImage(appSettings.advertFiles);
+            }
+        }
+    });
+
+    // Обновляем изображения в рекламном блоке каждые 15 секунд
+    if (appSettings.advertFiles && appSettings.advertFiles.length) {
+        setInterval(() => {
+            changeAdvertImage(appSettings.advertFiles);
+        }, 15000);
+    }
 }
 
 generateOrderLists();
 enableAdvertContainer();
-showAdvertFiles();
 refreshAppData();

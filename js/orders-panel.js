@@ -1,13 +1,9 @@
-var orders = [];
+var appSettings = getObjectFromLocalStorage('appSettings') ? getObjectFromLocalStorage('appSettings') : {enableAdvert: false, advertFiles: []};
+var orders = getObjectFromLocalStorage('orders').length ? getObjectFromLocalStorage('orders') : [];
+
 var dayOrders = [];
 var processingOrders = [];
 var readyOrders = [];
-
-// Настройки приложения
-var appSettings = {
-    enableAdvert: false,
-    advertFiles: []
-};
 
 var orderNumberInputs = document.querySelectorAll('.orderNumberInput');
 var updateOrderNumberButtons = document.querySelectorAll('.updateOrderNumber');
