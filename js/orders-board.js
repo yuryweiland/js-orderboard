@@ -1,5 +1,5 @@
 var appSettings = getObjectFromLocalStorage('appSettings');
-var orders = getObjectFromLocalStorage('orders');
+var orders = [];
 
 var processingOrdersList = document.getElementById('processingOrders');
 var readyOrdersList = document.getElementById('readyOrders');
@@ -48,8 +48,8 @@ function generateOrderLists() {
     processingOrdersList.innerHTML = '';
     readyOrdersList.innerHTML = '';
 
-    if (orders) {
-        orders.forEach((order) => {
+    if (getObjectFromLocalStorage('orders')) {
+        getObjectFromLocalStorage('orders').forEach((order) => {
 
             if (order.status === 'processing') {
                 processingResult.push(renderOrder(order));
@@ -109,6 +109,7 @@ function showAdvertFiles() {
  * - списков заказов "готовятся" и "готовы"
  * - настроек приложения (отображения рекламного блока и тп)
  */
+
 function refreshAppData() {
     window.addEventListener('storage', function (e) {
 
