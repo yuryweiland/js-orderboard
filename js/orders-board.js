@@ -1,5 +1,5 @@
 var appSettings = getObjectFromLocalStorage('appSettings') ? getObjectFromLocalStorage('appSettings') : {enableAdvert: false, advertFiles: []};
-var orders = getObjectFromLocalStorage('orders').length ? getObjectFromLocalStorage('orders') : [];
+var orders = getObjectFromLocalStorage('orders') ? getObjectFromLocalStorage('orders') : [];
 
 var processingOrdersList = document.getElementById('processingOrders');
 var readyOrdersList = document.getElementById('readyOrders');
